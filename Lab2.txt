@@ -1,0 +1,59 @@
+a) SELECT customer_name
+   FROM depositor
+   WHERE account_number 
+   IN (SELECT account_number
+       FROM account
+       WHERE balance > 500);
+
+b) SELECT customer_city
+   FROM customer
+   WHERE customer_name
+   IN (SELECT customer_name
+       FROM borrower
+       WHERE loan_number
+       IN (SELECT loan_number
+           FROM loan
+           WHERE amount >= 1000 AND amount <= 2000));
+
+c) SELECT balance * 1.1
+   FROM account
+   WHERE branch_name = 'Downtown';
+
+   A coluna surge como ?column?
+
+d) SELECT balance
+   FROM account
+   WHERE account_number
+   IN (SELECT account_number
+       FROM depositor
+       WHERE customer_name
+       IN (SELECT customer_name
+           FROM borrower
+           WHERE loan_number = 'L-15'));
+
+e) SELECT branch_name
+   FROM account
+   WHERE account_number
+   IN (SELECT account_number
+       FROM depositor
+       WHERE customer_name LIKE 'J%n');
+
+f) SELECT amount
+   FROM loan
+   WHERE loan_number
+   IN (SELECT loan_number
+       FROM borrower
+       WHERE customer_name
+       IN (SELECT customer_name
+           FROM customer
+           WHERE LENGTH(customer_city) = 6));
+
+g)
+
+h)
+
+i)
+
+j)
+
+k)
