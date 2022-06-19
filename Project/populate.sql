@@ -17,7 +17,6 @@ CREATE TABLE tem_outra(
 
 CREATE TABLE produto(
     ean VARCHAR(13) PRIMARY KEY,
-    cat VARCHAR(50) FOREIGN KEY REFERENCES categoria(nome),
     descr VARCHAR(100)
 );
 
@@ -50,7 +49,8 @@ CREATE TABLE prateleira(
     num_serie INT FOREIGN KEY REFERENCES ivm(num_serie),
     fabricante VARCHAR(50) FOREIGN KEY REFERENCES ivm(fabricante),
     altura REAL,
-    nome VARCHAR(50) FOREIGN KEY REFERENCES categoria(nome)
+    nome VARCHAR(50) FOREIGN KEY REFERENCES categoria(nome),
+    CONSTRAINT prateleira_pk PRIMARY KEY (nro, num_serie, fabricante)
 );
 
 CREATE TABLE planograma(

@@ -13,7 +13,14 @@ CREATE OR REPLACE FUNCTION chk_rep_event_units_does_not_exceed_planogram_units_p
 RETURNS TRIGGER AS
 $$
 BEGIN
-    IF /* ??? */ THEN
+    SELECT unidades 
+    INTO unidades_planograma
+    FROM planograma
+    WHERE ean = NEW.ean
+      AND nro = NEW.nro
+      AND num_serie = NEW.num_serie
+      AND fabricante = NEW.fabricante;
+    IF NEW.unidades > unidades_planograma THEN
         RAISE EXCEPTION 'Replenishment event units exceeds planogram units'
     END IF;
     RETURN NEW;
@@ -24,7 +31,17 @@ CREATE OR REPLACE FUNCTION chk_rep_product_in_shelf_with_product_category_proc()
 RETURNS TRIGGER AS
 $$
 BEGIN
-    IF /* ??? */ THEN
+    SELECT COUNT(nome)
+    INTO count_category
+    FROM tem_categoria
+    WHERE ean = NEW.ean
+      AND nome IN (SELECT nome
+                   FROM prateleira
+                   WHERE nro = NEW.nro
+                     AND num_serie = NEW.num_serie
+                     AND fabricante = NEW.fabricante);
+
+    IF count_category THEN
         RAISE EXCEPTION 'Product is replenished in a shelf without any of the product`s categories'
     END IF;
     RETURN NEW;
