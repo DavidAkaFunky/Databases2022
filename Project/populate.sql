@@ -1,17 +1,17 @@
-DROP TABLE categoria CASCADE;
-DROP TABLE categoria_simples CASCADE;
-DROP TABLE super_categoria CASCADE;
-DROP TABLE tem_categoria CASCADE;
-DROP TABLE produto CASCADE;
-DROP TABLE tem_categoria CASCADE;
-DROP TABLE ivm CASCADE;
-DROP TABLE ponto_de_retalho CASCADE;
-DROP TABLE instalada_em CASCADE;
-DROP TABLE prateleira CASCADE;
-DROP TABLE planograma CASCADE;
-DROP TABLE retalhista CASCADE;
-DROP TABLE responsavel_por CASCADE;
-DROP TABLE evento_reposicao CASCADE;
+DROP TABLE IF EXISTS categoria CASCADE;
+DROP TABLE IF EXISTS categoria_simples CASCADE;
+DROP TABLE IF EXISTS super_categoria CASCADE;
+DROP TABLE IF EXISTS tem_categoria CASCADE;
+DROP TABLE IF EXISTS produto CASCADE;
+DROP TABLE IF EXISTS tem_categoria CASCADE;
+DROP TABLE IF EXISTS ivm CASCADE;
+DROP TABLE IF EXISTS ponto_de_retalho CASCADE;
+DROP TABLE IF EXISTS instalada_em CASCADE;
+DROP TABLE IF EXISTS prateleira CASCADE;
+DROP TABLE IF EXISTS planograma CASCADE;
+DROP TABLE IF EXISTS retalhista CASCADE;
+DROP TABLE IF EXISTS responsavel_por CASCADE;
+DROP TABLE IF EXISTS evento_reposicao CASCADE;
 
 CREATE TABLE categoria(
     nome VARCHAR(50) NOT NULL PRIMARY KEY
@@ -124,10 +124,42 @@ INSERT INTO tem_outra values("sandes","sandes de queijo");
 INSERT INTO tem_outra values("bebidas","bebidas em garrafa");
 INSERT INTO tem_outra values("bebidas","bebidas em lata");
 
-INSERT INTO produto values("01","sandes de fiambre","sandes de friambre com manteiga");
-INSERT INTO produto values("02","sandes de fiambre","sandes de friambre sem manteiga");
-INSERT INTO produto values("02","sandes de queijo","sandes de friambre com manteiga");
-INSERT INTO produto values("02","sandes de queijo","sandes de friambre sem manteiga");
+INSERT INTO produto values("01","sandes de friambre com manteiga");
+INSERT INTO produto values("02","sandes de friambre sem manteiga");
+INSERT INTO produto values("03","sandes de queijo com manteiga");
+INSERT INTO produto values("04","sandes de queijo sem manteiga");
+INSERT INTO produto values("05","sandes de atum");
+INSERT INTO produto values("06","pleno");
+INSERT INTO produto values("07","agua");
+INSERT INTO produto values("08","coca-cola");
+INSERT INTO produto values("09","lipton");
+INSERT INTO produto values("10","compal");
+
+INSERT INTO tem_categoria values("01","sandes de fiambre");
+INSERT INTO tem_categoria values("02","sandes de fiambre");
+INSERT INTO tem_categoria values("03","sandes de queijo");
+INSERT INTO tem_categoria values("04","sandes de queijo");
+INSERT INTO tem_categoria values("05","sandes");
+INSERT INTO tem_categoria values("06","bebidas em garrafa");
+INSERT INTO tem_categoria values("07","bebidas em garrafa");
+INSERT INTO tem_categoria values("08","bebidas em lata");
+INSERT INTO tem_categoria values("09","bebidas em lata");
+INSERT INTO tem_categoria values("10","bebidas");
+
+INSERT INTO ivm values("IVM01","IST");
+INSERT INTO ivm values("IVM02","ISEL");
+INSERT INTO ivm values("IVM03","ISCAL");
+
+INSERT INTO ponto_de_retalho values("IST machine", "Lisboa", "Lisboa");
+INSERT INTO ponto_de_retalho values("ISEL machine", "Lisboa", "Lisboa");
+INSERT INTO ponto_de_retalho values("ISCAL machine", "Lisboa", "Lisboa");
+
+
+
+
+
+
+
 
 
 

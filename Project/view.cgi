@@ -50,9 +50,8 @@ def create_category():
     try:
         dbConn = psycopg2.connect(DB_CONNECTION_STRING)
         cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        name = 
-        query = "INSERT INTO categoria VALUES ("
-        data = (balance, account_number)
+        query = "INSERT INTO categoria VALUES (%s);"
+        data = (name)
         cursor.execute(query, data)
         return query
     except Exception as e:
@@ -62,5 +61,66 @@ def create_category():
         cursor.close()
         dbConn.close()
 
+@app.route("/delete_category", methods=["DELETE"])
+def delete_category():
+    dbConn = None
+    cursor = None
+    try:
+        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
+        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = "DELETE FROM categoria WHERE name = %s;"
+        data = (name)
+        cursor.execute(query, data)
+        return query
+    except Exception as e:
+        return str(e)
+    finally:
+        dbConn.commit()
+        cursor.close()
+        dbConn.close()
+
+# TODO
+@app.route("/new_subcategory", methods=["POST"])
+def create_category():
+    dbConn = None
+    cursor = None
+    try:
+        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
+        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = "DELETE FROM categoria_simples WHERE name = %s;
+                 INSERT INTO super_categoria VALUES (%s);
+                 INSERT INTO categoria VALUES (%s)
+                 INSERT INTO categoria VALUES (%s);
+                 INSERT INTO tem_outra VALUES (%s, %s);"
+        data = (super_name, super_name, super_name, super_name, name)
+        cursor.execute(query, data)
+        return query
+    except Exception as e:
+        return str(e)
+    finally:
+        dbConn.commit()
+        cursor.close()
+        dbConn.close()
+
+# TODO
+@app.route("/delete_subcategory", methods=["DELETE"])
+def delete_category():
+    dbConn = None
+    cursor = None
+    try:
+        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
+        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = "DELETE FROM super_categoria WHERE name = %s;
+                 INSERT INTO super_categoria VALUES (%s);"
+                 INSERT INTO tem_outra VALUES (%s, %s);"
+        data = (super_name, super_name, super_name, name)
+        cursor.execute(query, data)
+        return query
+    except Exception as e:
+        return str(e)
+    finally:
+        dbConn.commit()
+        cursor.close()
+        dbConn.close()
 
 CGIHandler().run(app)

@@ -2,4 +2,5 @@
 categorias? */
 
 SELECT name
-FROM evento_reposicao
+FROM retalhista NATURAL JOIN evento_reposicao NATURAL JOIN responsavel_por
+WHERE 
