@@ -3,4 +3,8 @@ categorias? */
 
 SELECT name
 FROM retalhista NATURAL JOIN evento_reposicao NATURAL JOIN responsavel_por
-WHERE 
+GROUP BY tin
+HAVING COUNT(*) >= ALL
+    (SELECT COUNT(*)
+    FROM retalhista NATURAL JOIN evento_reposicao NATURAL JOIN responsavel_por
+    GROUP BY tin);
