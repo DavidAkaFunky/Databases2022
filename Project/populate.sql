@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS categoria CASCADE;
 DROP TABLE IF EXISTS categoria_simples CASCADE;
 DROP TABLE IF EXISTS super_categoria CASCADE;
-DROP TABLE IF EXISTS tem_categoria CASCADE;
+DROP TABLE IF EXISTS tem_outra CASCADE;
 DROP TABLE IF EXISTS produto CASCADE;
 DROP TABLE IF EXISTS tem_categoria CASCADE;
 DROP TABLE IF EXISTS ivm CASCADE;
@@ -33,161 +33,182 @@ CREATE TABLE super_categoria(
 CREATE TABLE tem_outra(
     "super_categoria" VARCHAR(50) NOT NULL,
     "categoria" VARCHAR(50) NOT NULL,
-    CONSTRAINT "nome_super_cat_tem_outra_fk" FOREIGN KEY("nome") REFERENCES super_categoria("nome"),
-    CONSTRAINT "nome_cat_tem_outra_fk" FOREIGN KEY("nome") REFERENCES categoria("nome")
+    CONSTRAINT "nome_super_cat_tem_outra_fk" FOREIGN KEY("super_categoria") REFERENCES super_categoria("nome"),
+    CONSTRAINT "nome_cat_tem_outra_fk" FOREIGN KEY("categoria") REFERENCES categoria("nome")
 );
 
 CREATE TABLE produto(
-    "ean" VARCHAR(13) NOT NULL UNIQUE,
+    "ean" INT NOT NULL,
     "descr" VARCHAR(100) NOT NULL,
     CONSTRAINT "ean_produto_pk" PRIMARY KEY("ean")
 );
 
 CREATE TABLE tem_categoria(
-    "ean" VARCHAR(13),
+    "ean" INT NOT NULL,
+    "nome" VARCHAR(50) NOT NULL,
     CONSTRAINT "ean_produto_tem_categoria_fk" FOREIGN KEY("ean") REFERENCES produto("ean"),
-    "nome" VARCHAR(50),
     CONSTRAINT "nome_categoria_tem_categoria_fk" FOREIGN KEY("nome") REFERENCES categoria("nome")
 );
 
 CREATE TABLE ivm(
-    "num_serie" INT,
-    "fabricante" VARCHAR(50),
-    CONSTRAINT "ivm_pk" PRIMARY KEY("num_serie","fabricante")
+    "num_serie" INT NOT NULL,
+    "fabricante" VARCHAR(50) NOT NULL,
+    CONSTRAINT "ivm_pk" PRIMARY KEY("num_serie", "fabricante")
 );
 
 CREATE TABLE ponto_de_retalho(
     "nome" VARCHAR(50) NOT NULL UNIQUE,
-    CONSTRAINT "nome_ponto_pk" PRIMARY KEY("nome"),
-    "distrito" VARCHAR(50),
-    "concelho" VARCHAR(50)
+    "distrito" VARCHAR(50) NOT NULL,
+    "concelho" VARCHAR(50) NOT NULL,
+    CONSTRAINT "nome_ponto_pk" PRIMARY KEY("nome")
 );
 
 CREATE TABLE instalada_em(
-    "num_serie" INT,
-    CONSTRAINT "num_serie_ivm_instalada_em_fk" FOREIGN KEY("num_serie") REFERENCES ivm("num_serie"),
-    "fabricante" VARCHAR(50),
-    CONSTRAINT "fabricante_ivm_instala_em_fk" FOREIGN KEY("fabricante") REFERENCES ivm("fabricante"),
-    local VARCHAR(50)
-    CONSTRAINT "local_ponto_de_retalho_instala_em_fk" FOREIGN KEY(local) REFERENCES ponto_de_retalho("nome"),
-    CONSTRAINT instalada_em_pk PRIMARY KEY ("num_serie", "fabricante")
+    "num_serie" INT NOT NULL,
+    "fabricante" VARCHAR(50) NOT NULL,
+    "local" VARCHAR(50) NOT NULL,
+    CONSTRAINT "num_serie_fabricante_ivm_instalada_em_fk" FOREIGN KEY("num_serie", "fabricante") REFERENCES ivm("num_serie", "fabricante"),
+    CONSTRAINT "local_ponto_de_retalho_instala_em_fk" FOREIGN KEY("local") REFERENCES ponto_de_retalho("nome"),
+    CONSTRAINT "instalada_em_pk" PRIMARY KEY ("num_serie", "fabricante")
 );
 
 CREATE TABLE prateleira(
-    "nro" INT,
-    "num_serie" INT,
-    CONSTRAINT "num_serie_ivm_prateleira_fk" FOREIGN KEY("num_serie") REFERENCES ivm("num_serie"),
-    "fabricante" VARCHAR(50),
-    CONSTRAINT "fabricante_ivm_prateleira_fk" FOREIGN KEY("fabricante") REFERENCES ivm("fabricante"),
-    "altura" REAL,
-    "nome" VARCHAR(50),
+    "nro" INT NOT NULL,
+    "num_serie" INT NOT NULL,
+    "fabricante" VARCHAR(50) NOT NULL,
+    "altura" REAL NOT NULL,
+    "nome" VARCHAR(50) NOT NULL,
+    CONSTRAINT "num_serie_fabricante_ivm_prateleira_fk" FOREIGN KEY("num_serie", "fabricante") REFERENCES ivm("num_serie", "fabricante"),
     CONSTRAINT "nome_categoria_prateleira_fk" FOREIGN KEY("nome") REFERENCES categoria("nome"),
-    CONSTRAINT "prateleira_pk" PRIMARY KEY("nro", "num_serie", "fabricante"),
+    CONSTRAINT "prateleira_pk" PRIMARY KEY("nro", "num_serie", "fabricante")
 );
 
 CREATE TABLE planograma(
-    "ean" VARCHAR(13),
+    "ean" INT NOT NULL,
+    "nro" INT NOT NULL, 
+    "num_serie" INT NOT NULL,
+    "fabricante" VARCHAR(50) NOT NULL,
+    "faces" INT NOT NULL,
+    "unidades" INT NOT NULL,
+    "loc" VARCHAR(50) NOT NULL,
     CONSTRAINT "ean_produto_planograma_fk" FOREIGN KEY("ean") REFERENCES produto("ean"),
-    "nro" INT, 
-    CONSTRAINT "nro_prateleira_planograma_fk" FOREIGN KEY("nro") REFERENCES prateleira("nro"),
-    "num_serie" INT,
-    CONSTRAINT "num_serie_prateleira_planograma_fk" FOREIGN KEY("num_serie") REFERENCES prateleira("num_serie"),
-    "fabricante" VARCHAR(50),
-    CONSTRAINT "frabircante_prateleira_planograma_fk" FOREIGN KEY("fabricante") REFERENCES prateleira("fabricante"), 
-    "faces" INT,
-    "unidades" INT,
-    "loc" VARCHAR(50),
+    CONSTRAINT "nro_num_serie_fabricante_prateleira_planograma_fk" FOREIGN KEY("nro", "num_serie", "fabricante") REFERENCES prateleira("nro", "num_serie", "fabricante"), 
     CONSTRAINT "planograma_pk" PRIMARY KEY ("ean", "nro", "num_serie", "fabricante")
 );
 
 CREATE TABLE retalhista(
-    "tin" INT,
-    CONSTRAINT "retalhista_pk" PRIMARY KEY("tin"),
-    "nome" VARCHAR(50) UNIQUE
+    "tin" INT NOT NULL,
+    "nome" VARCHAR(50) NOT NULL UNIQUE,
+    CONSTRAINT "retalhista_pk" PRIMARY KEY("tin")
 );
 
 CREATE TABLE responsavel_por(
-    "nome_cat" VARCHAR(50),
+    "nome_cat" VARCHAR(50) NOT NULL,
+    "tin" INT NOT NULL,
+    "num_serie" INT NOT NULL,
+    "fabricante" VARCHAR(50) NOT NULL,
     CONSTRAINT "nome_cat_responsavel_por_fk" FOREIGN KEY("nome_cat") REFERENCES categoria("nome"),
-    "tin" INT,
-    CONSTRAINT "tin_retalhista_responsavel_por_fk"FOREIGN KEY("tin") REFERENCES retalhista("tin"),
-    "num_serie" INT,
-    CONSTRAINT "num_serie_ivm_responsavel_por_fk" FOREIGN KEY("num_serie") REFERENCES ivm("num_serie"),
-    "fabricante" VARCHAR(50),
-    CONSTRAINT "fabricante_ivm_responsavel_por_fk" FOREIGN KEY("fabricante") REFERENCES ivm("fabricante"),
+    CONSTRAINT "tin_retalhista_responsavel_por_fk" FOREIGN KEY("tin") REFERENCES retalhista("tin"),
+    CONSTRAINT "num_serie_fabricante_ivm_responsavel_por_fk" FOREIGN KEY("num_serie", "fabricante") REFERENCES ivm("num_serie", "fabricante"),
     CONSTRAINT "responsavel_por_pk" PRIMARY KEY ("num_serie", "fabricante")
 );
 
 CREATE TABLE evento_reposicao(
-    "ean" VARCHAR(13), 
-    CONSTRAINT "ean_planograma_evento_reposicao_fk" FOREIGN KEY("ean") REFERENCES planograma("ean"),
-    "nro" INT,
-    CONSTRAINT "nro_planograma_evento_reposicao_fk" FOREIGN KEY("nro") REFERENCES planograma("nro"),
-    "num_serie" INT,
-    CONSTRAINT "num_serie_planograma_evento_reposicao_fk" FOREIGN KEY("num_serie") REFERENCES planograma("num_serie"),
-    "fabricante" VARCHAR(50), 
-    CONSTRAINT "fabricante_planograma_evento_reposicao_fk"FOREIGN KEY("fabricante") REFERENCES planograma("fabricante"),
-    "instante" TIMESTAMP,
-    "unidades" INT,
-    "tin" INT,
+    "ean" INT NOT NULL,
+    "nro" INT NOT NULL,
+    "num_serie" INT NOT NULL,
+    "fabricante" VARCHAR(50) NOT NULL, 
+    "instante" TIMESTAMP NOT NULL,
+    "unidades" INT NOT NULL,
+    "tin" INT NOT NULL,
+    CONSTRAINT "planograma_evento_reposicao_fk" FOREIGN KEY("ean", "nro", "num_serie", "fabricante") REFERENCES planograma("ean", "nro", "num_serie", "fabricante"),
     CONSTRAINT "tin_retalhista_evento_reposicao_fk" FOREIGN KEY("tin") REFERENCES retalhista("tin"),
     CONSTRAINT "evento_reposicao_pk" PRIMARY KEY ("ean", "nro", "num_serie", "fabricante", "instante")
 );
+ 
+INSERT INTO categoria VALUES ('sandes');
+INSERT INTO categoria VALUES ('sandes de fiambre');
+INSERT INTO categoria VALUES ('sandes de queijo');
+INSERT INTO categoria VALUES ('bebidas');
+INSERT INTO categoria VALUES ('bebidas em garrafa');
+INSERT INTO categoria VALUES ('bebidas em lata');
 
+INSERT INTO categoria_simples VALUES ('sandes de fiambre');
+INSERT INTO categoria_simples VALUES ('sandes de queijo');
+INSERT INTO categoria_simples VALUES ('bebidas em garrafa');
+INSERT INTO categoria_simples VALUES ('bebidas em lata');
 
-INSERT INTO categoria values ("sandes");
-INSERT INTO categoria values ("sandes de fiambre");
-INSERT INTO categoria values ("sandes de queijo");
-INSERT INTO categoria values ("bebidas");
-INSERT INTO categoria values ("bebidas em garrafa");
-INSERT INTO categoria values ("bebidas em lata");
+INSERT INTO super_categoria VALUES ('sandes');
+INSERT INTO super_categoria VALUES ('bebidas');
 
-INSERT INTO categoria_simples values("sandes de fiambre");
-INSERT INTO categoria_simples values ("sandes de queijo");
-INSERT INTO categoria_simples values("bebidas em garrafa");
-INSERT INTO categoria_simples values("bebidas em lata");
+INSERT INTO tem_outra VALUES ('sandes','sandes de fiambre');
+INSERT INTO tem_outra VALUES ('sandes','sandes de queijo');
+INSERT INTO tem_outra VALUES ('bebidas','bebidas em garrafa');
+INSERT INTO tem_outra VALUES ('bebidas','bebidas em lata');
 
-INSERT INTO super_categoria values("sandes");
-INSERT INTO super_categoria values("bebidas");
+INSERT INTO produto VALUES (01,'sandes de fiambre com manteiga');
+INSERT INTO produto VALUES (02,'sandes de fiambre sem manteiga');
+INSERT INTO produto VALUES (03,'sandes de queijo com manteiga');
+INSERT INTO produto VALUES (04,'sandes de queijo sem manteiga');
+INSERT INTO produto VALUES (05,'sandes de atum');
+INSERT INTO produto VALUES (06,'pleno');
+INSERT INTO produto VALUES (07,'agua');
+INSERT INTO produto VALUES (08,'coca-cola');
+INSERT INTO produto VALUES (09,'lipton');
+INSERT INTO produto VALUES (10,'compal');
 
-INSERT INTO tem_outra values("sandes","sandes de fiambre");
-INSERT INTO tem_outra values("sandes","sandes de queijo");
-INSERT INTO tem_outra values("bebidas","bebidas em garrafa");
-INSERT INTO tem_outra values("bebidas","bebidas em lata");
+INSERT INTO tem_categoria VALUES (01,'sandes de fiambre');
+INSERT INTO tem_categoria VALUES (02,'sandes de fiambre');
+INSERT INTO tem_categoria VALUES (03,'sandes de queijo');
+INSERT INTO tem_categoria VALUES (04,'sandes de queijo');
+INSERT INTO tem_categoria VALUES (05,'sandes');
+INSERT INTO tem_categoria VALUES (06,'bebidas em garrafa');
+INSERT INTO tem_categoria VALUES (07,'bebidas em garrafa');
+INSERT INTO tem_categoria VALUES (08,'bebidas em lata');
+INSERT INTO tem_categoria VALUES (09,'bebidas em lata');
+INSERT INTO tem_categoria VALUES (10,'bebidas');
 
-INSERT INTO produto values("01","sandes de friambre com manteiga");
-INSERT INTO produto values("02","sandes de friambre sem manteiga");
-INSERT INTO produto values("03","sandes de queijo com manteiga");
-INSERT INTO produto values("04","sandes de queijo sem manteiga");
-INSERT INTO produto values("05","sandes de atum");
-INSERT INTO produto values("06","pleno");
-INSERT INTO produto values("07","agua");
-INSERT INTO produto values("08","coca-cola");
-INSERT INTO produto values("09","lipton");
-INSERT INTO produto values("10","compal");
+INSERT INTO ivm VALUES (53253545, 'IST');
+INSERT INTO ivm VALUES (12369420, 'ISEL');
+INSERT INTO ivm VALUES (48565232, 'ISCAL');
 
-INSERT INTO tem_categoria values("01","sandes de fiambre");
-INSERT INTO tem_categoria values("02","sandes de fiambre");
-INSERT INTO tem_categoria values("03","sandes de queijo");
-INSERT INTO tem_categoria values("04","sandes de queijo");
-INSERT INTO tem_categoria values("05","sandes");
-INSERT INTO tem_categoria values("06","bebidas em garrafa");
-INSERT INTO tem_categoria values("07","bebidas em garrafa");
-INSERT INTO tem_categoria values("08","bebidas em lata");
-INSERT INTO tem_categoria values("09","bebidas em lata");
-INSERT INTO tem_categoria values("10","bebidas");
+INSERT INTO ponto_de_retalho VALUES ('IST machine', 'Lisboa', 'Lisboa');
+INSERT INTO ponto_de_retalho VALUES ('ISEL machine', 'Lisboa', 'Lisboa');
+INSERT INTO ponto_de_retalho VALUES ('ISCAL machine', 'Lisboa', 'Lisboa');
 
-INSERT INTO ivm values("IVM01","IST");
-INSERT INTO ivm values("IVM02","ISEL");
-INSERT INTO ivm values("IVM03","ISCAL");
+INSERT INTO instalada_em VALUES (53253545, 'IST', 'IST machine');
+INSERT INTO instalada_em VALUES (12369420, 'ISEL', 'ISEL machine');
+INSERT INTO instalada_em VALUES (48565232, 'ISCAL', 'ISCAL machine');
 
-INSERT INTO ponto_de_retalho values("IST machine", "Lisboa", "Lisboa");
-INSERT INTO ponto_de_retalho values("ISEL machine", "Lisboa", "Lisboa");
-INSERT INTO ponto_de_retalho values("ISCAL machine", "Lisboa", "Lisboa");
+INSERT INTO prateleira VALUES (01, 53253545, 'IST', 2, 'sandes');
+INSERT INTO prateleira VALUES (02, 53253545, 'IST', 2, 'bebidas');
+INSERT INTO prateleira VALUES (01, 12369420, 'ISEL', 2, 'sandes de fiambre');
+INSERT INTO prateleira VALUES (02, 12369420, 'ISEL', 2, 'bebidas em garrafa');
+INSERT INTO prateleira VALUES (01, 48565232, 'ISCAL', 2, 'sandes de queijo');
+INSERT INTO prateleira VALUES (02, 48565232, 'ISCAL', 2, 'bebidas em lata');
 
+INSERT INTO planograma VALUES (05, 01, 53253545, 'IST', 2, 10, 'IST');
+INSERT INTO planograma VALUES (01, 01, 53253545, 'IST', 2, 10, 'IST');
+INSERT INTO planograma VALUES (10, 02, 53253545, 'IST', 2, 10, 'IST');
+INSERT INTO planograma VALUES (01, 01, 12369420, 'ISEL', 2, 10, 'ISEL');
+INSERT INTO planograma VALUES (02, 01, 12369420, 'ISEL', 2, 10, 'ISEL');
+INSERT INTO planograma VALUES (06, 02, 12369420, 'ISEL', 2, 10, 'ISEL');
+INSERT INTO planograma VALUES (03, 01, 48565232, 'ISCAL', 2, 10, 'ISCAL');
+INSERT INTO planograma VALUES (08, 02, 48565232, 'ISCAL', 2, 10, 'ISCAL');
+INSERT INTO planograma VALUES (09, 02, 48565232, 'ISCAL', 2, 10, 'ISCAL');
 
+INSERT INTO retalhista VALUES (001,'LIDL');
+INSERT INTO retalhista VALUES (002,'Continente');
+INSERT INTO retalhista VALUES (003,'Pingo Doce');
 
+INSERT INTO responsavel_por VALUES ('sandes', 001, 53253545, 'IST');
+/* INSERT INTO responsavel_por VALUES ('bebidas', 001, 53253545, 'IST'); */
+INSERT INTO responsavel_por VALUES ('sandes de fiambre', 002, 12369420, 'ISEL');
+/* INSERT INTO responsavel_por VALUES ('bebidas em garrafa', 002, 12369420, 'ISEL');*/
+INSERT INTO responsavel_por VALUES ('sandes de queijo', 003, 48565232, 'ISCAL');
+/* INSERT INTO responsavel_por VALUES ('bebidas em lata', 003, 48565232, 'ISCAL');*/
 
+INSERT INTO evento_reposicao VALUES (05, 01, 53253545, 'IST', '2008-01-01 00:00:01', 5, 001);
 
 
 
