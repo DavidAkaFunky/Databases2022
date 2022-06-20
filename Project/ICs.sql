@@ -41,7 +41,7 @@ BEGIN
                      AND num_serie = NEW.num_serie
                      AND fabricante = NEW.fabricante);
 
-    IF count_category THEN
+    IF count_category == 0 THEN
         RAISE EXCEPTION 'Product is replenished in a shelf without any of the product`s categories'
     END IF;
     RETURN NEW;
