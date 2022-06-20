@@ -14,93 +14,124 @@ DROP TABLE IF EXISTS responsavel_por CASCADE;
 DROP TABLE IF EXISTS evento_reposicao CASCADE;
 
 CREATE TABLE categoria(
-    nome VARCHAR(50) NOT NULL PRIMARY KEY
+    "nome" VARCHAR(50) NOT NULL UNIQUE,
+    CONSTRAINT "nome_cat_pk" PRIMARY KEY ("nome")
 );
 
 CREATE TABLE categoria_simples(
-    nome VARCHAR(50) PRIMARY KEY FOREIGN KEY REFERENCES categoria(name)
+    "nome" VARCHAR(50) NOT NULL UNIQUE,
+    CONSTRAINT "nome_cat_simples_pk" PRIMARY KEY("nome"),
+    CONSTRAINT "nome_cat_simples_fk" FOREIGN KEY("nome") REFERENCES categoria("nome")
 );
 
 CREATE TABLE super_categoria(
-    nome VARCHAR(50) PRIMARY KEY FOREIGN KEY REFERENCES categoria(name)
+    "nome" VARCHAR(50) NOT NULL UNIQUE,
+    CONSTRAINT "nome_super_cat_pk" PRIMARY KEY("nome"),
+    CONSTRAINT "nome_super_cat_fk" FOREIGN KEY("nome") REFERENCES categoria("nome")
 );
 
 CREATE TABLE tem_outra(
-    super_categoria VARCHAR(50) FOREIGN KEY REFERENCES super_categoria(nome),
-    categoria VARCHAR(50) FOREIGN KEY REFERENCES categoria(nome)
+    "super_categoria" VARCHAR(50) NOT NULL,
+    "categoria" VARCHAR(50) NOT NULL,
+    CONSTRAINT "nome_super_cat_tem_outra_fk" FOREIGN KEY("nome") REFERENCES super_categoria("nome"),
+    CONSTRAINT "nome_cat_tem_outra_fk" FOREIGN KEY("nome") REFERENCES categoria("nome")
 );
 
 CREATE TABLE produto(
-    ean VARCHAR(13) PRIMARY KEY,
-    descr VARCHAR(100)
+    "ean" VARCHAR(13) NOT NULL UNIQUE,
+    "descr" VARCHAR(100) NOT NULL,
+    CONSTRAINT "ean_produto_pk" PRIMARY KEY("ean")
 );
 
 CREATE TABLE tem_categoria(
-    ean VARCHAR(13) FOREIGN KEY REFERENCES produto(ean),
-    nome VARCHAR(50) FOREIGN KEY REFERENCES categoria(nome)
+    "ean" VARCHAR(13),
+    CONSTRAINT "ean_produto_tem_categoria_fk" FOREIGN KEY("ean") REFERENCES produto("ean"),
+    "nome" VARCHAR(50),
+    CONSTRAINT "nome_categoria_tem_categoria_fk" FOREIGN KEY("nome") REFERENCES categoria("nome")
 );
 
 CREATE TABLE ivm(
-    num_serie INT,
-    fabricante VARCHAR(50),
-    CONSTRAINT ivm_pk PRIMARY KEY (num_serie, fabricante)
+    "num_serie" INT,
+    "fabricante" VARCHAR(50),
+    CONSTRAINT "ivm_pk" PRIMARY KEY("num_serie","fabricante")
 );
 
 CREATE TABLE ponto_de_retalho(
-    nome VARCHAR(50) PRIMARY KEY,
-    distrito VARCHAR(50),
-    concelho VARCHAR(50)
+    "nome" VARCHAR(50) NOT NULL UNIQUE,
+    CONSTRAINT "nome_ponto_pk" PRIMARY KEY("nome"),
+    "distrito" VARCHAR(50),
+    "concelho" VARCHAR(50)
 );
 
 CREATE TABLE instalada_em(
-    num_serie INT FOREIGN KEY REFERENCES ivm(num_serie),
-    fabricante VARCHAR(50) FOREIGN KEY REFERENCES ivm(fabricante),
-    local VARCHAR(50) FOREIGN KEY REFERENCES ponto_de_retalho(nome)
-    CONSTRAINT instalada_em_pk PRIMARY KEY (num_serie, fabricante)
+    "num_serie" INT,
+    CONSTRAINT "num_serie_ivm_instalada_em_fk" FOREIGN KEY("num_serie") REFERENCES ivm("num_serie"),
+    "fabricante" VARCHAR(50),
+    CONSTRAINT "fabricante_ivm_instala_em_fk" FOREIGN KEY("fabricante") REFERENCES ivm("fabricante"),
+    local VARCHAR(50)
+    CONSTRAINT "local_ponto_de_retalho_instala_em_fk" FOREIGN KEY(local) REFERENCES ponto_de_retalho("nome"),
+    CONSTRAINT instalada_em_pk PRIMARY KEY ("num_serie", "fabricante")
 );
 
 CREATE TABLE prateleira(
-    nro INT,
-    num_serie INT FOREIGN KEY REFERENCES ivm(num_serie),
-    fabricante VARCHAR(50) FOREIGN KEY REFERENCES ivm(fabricante),
-    altura REAL,
-    nome VARCHAR(50) FOREIGN KEY REFERENCES categoria(nome),
-    CONSTRAINT prateleira_pk PRIMARY KEY (nro, num_serie, fabricante)
+    "nro" INT,
+    "num_serie" INT,
+    CONSTRAINT "num_serie_ivm_prateleira_fk" FOREIGN KEY("num_serie") REFERENCES ivm("num_serie"),
+    "fabricante" VARCHAR(50),
+    CONSTRAINT "fabricante_ivm_prateleira_fk" FOREIGN KEY("fabricante") REFERENCES ivm("fabricante"),
+    "altura" REAL,
+    "nome" VARCHAR(50),
+    CONSTRAINT "nome_categoria_prateleira_fk" FOREIGN KEY("nome") REFERENCES categoria("nome"),
+    CONSTRAINT "prateleira_pk" PRIMARY KEY("nro", "num_serie", "fabricante"),
 );
 
 CREATE TABLE planograma(
-    ean VARCHAR(13) FOREIGN KEY REFERENCES produto(ean),
-    nro INT FOREIGN KEY REFERENCES prateleira(nro),
-    num_serie INT FOREIGN KEY REFERENCES prateleira(num_serie),
-    fabricante VARCHAR(50) FOREIGN KEY REFERENCES prateleira(fabricante),
-    faces INT,
-    unidades INT,
-    loc VARCHAR(50),
-    CONSTRAINT planograma_pk PRIMARY KEY (ean, nro, num_serie, fabricante)
+    "ean" VARCHAR(13),
+    CONSTRAINT "ean_produto_planograma_fk" FOREIGN KEY("ean") REFERENCES produto("ean"),
+    "nro" INT, 
+    CONSTRAINT "nro_prateleira_planograma_fk" FOREIGN KEY("nro") REFERENCES prateleira("nro"),
+    "num_serie" INT,
+    CONSTRAINT "num_serie_prateleira_planograma_fk" FOREIGN KEY("num_serie") REFERENCES prateleira("num_serie"),
+    "fabricante" VARCHAR(50),
+    CONSTRAINT "frabircante_prateleira_planograma_fk" FOREIGN KEY("fabricante") REFERENCES prateleira("fabricante"), 
+    "faces" INT,
+    "unidades" INT,
+    "loc" VARCHAR(50),
+    CONSTRAINT "planograma_pk" PRIMARY KEY ("ean", "nro", "num_serie", "fabricante")
 );
 
 CREATE TABLE retalhista(
-    tin INT PRIMARY KEY,
-    nome VARCHAR(50) UNIQUE;
+    "tin" INT,
+    CONSTRAINT "retalhista_pk" PRIMARY KEY("tin"),
+    "nome" VARCHAR(50) UNIQUE
 );
 
 CREATE TABLE responsavel_por(
-    nome_cat VARCHAR(50) FOREIGN KEY REFERENCES categoria(nome),
-    tin INT FOREIGN KEY REFERENCES retalhista(tin),
-    num_serie INT FOREIGN KEY REFERENCES ivm(num_serie),
-    fabricante VARCHAR(50) FOREIGN KEY REFERENCES ivm(fabricante),
-    CONSTRAINT responsavel_por_pk PRIMARY KEY (num_serie, fabricante)
+    "nome_cat" VARCHAR(50),
+    CONSTRAINT "nome_cat_responsavel_por_fk" FOREIGN KEY("nome_cat") REFERENCES categoria("nome"),
+    "tin" INT,
+    CONSTRAINT "tin_retalhista_responsavel_por_fk"FOREIGN KEY("tin") REFERENCES retalhista("tin"),
+    "num_serie" INT,
+    CONSTRAINT "num_serie_ivm_responsavel_por_fk" FOREIGN KEY("num_serie") REFERENCES ivm("num_serie"),
+    "fabricante" VARCHAR(50),
+    CONSTRAINT "fabricante_ivm_responsavel_por_fk" FOREIGN KEY("fabricante") REFERENCES ivm("fabricante"),
+    CONSTRAINT "responsavel_por_pk" PRIMARY KEY ("num_serie", "fabricante")
 );
 
 CREATE TABLE evento_reposicao(
-    ean VARCHAR(13) FOREIGN KEY REFERENCES planograma(ean),
-    nro INT FOREIGN KEY REFERENCES planograma(nro),
-    num_serie INT FOREIGN KEY REFERENCES planograma(num_serie),
-    fabricante VARCHAR(50) FOREIGN KEY REFERENCES planograma(fabricante),
-    instante TIMESTAMP,
-    unidades INT,
-    tin INT FOREIGN KEY REFERENCES retalhista(tin),
-    CONSTRAINT evento_reposicao_pk PRIMARY KEY (ean, nro, num_serie, fabricante, instante)
+    "ean" VARCHAR(13), 
+    CONSTRAINT "ean_planograma_evento_reposicao_fk" FOREIGN KEY("ean") REFERENCES planograma("ean"),
+    "nro" INT,
+    CONSTRAINT "nro_planograma_evento_reposicao_fk" FOREIGN KEY("nro") REFERENCES planograma("nro"),
+    "num_serie" INT,
+    CONSTRAINT "num_serie_planograma_evento_reposicao_fk" FOREIGN KEY("num_serie") REFERENCES planograma("num_serie"),
+    "fabricante" VARCHAR(50), 
+    CONSTRAINT "fabricante_planograma_evento_reposicao_fk"FOREIGN KEY("fabricante") REFERENCES planograma("fabricante"),
+    "instante" TIMESTAMP,
+    "unidades" INT,
+    "tin" INT,
+    CONSTRAINT "tin_retalhista_evento_reposicao_fk" FOREIGN KEY("tin") REFERENCES retalhista("tin"),
+    CONSTRAINT "evento_reposicao_pk" PRIMARY KEY ("ean", "nro", "num_serie", "fabricante", "instante")
 );
 
 
