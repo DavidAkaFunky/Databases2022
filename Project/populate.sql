@@ -209,3 +209,4 @@ INSERT INTO responsavel_por VALUES ('sandes de queijo', 003, 48565232, 'ISCAL');
 /* INSERT INTO responsavel_por VALUES ('bebidas em lata', 003, 48565232, 'ISCAL');*/
 
 INSERT INTO evento_reposicao VALUES (05, 01, 53253545, 'IST', '2008-01-01 00:00:01', 5, 001);
+INSERT INTO evento_reposicao VALUES (05, 01, 53253545, 'IST', '2008-02-05 21:00:31', 5, 003);
