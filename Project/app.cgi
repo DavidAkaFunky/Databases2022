@@ -32,7 +32,7 @@ def list_replenishment_events():
         cursor.close()
         dbConn.close()
 
-@app.route("/new_category", methods=["POST"])
+@app.route("/new_category/", methods=["POST"])
 def create_category():
     dbConn = None
     cursor = None
