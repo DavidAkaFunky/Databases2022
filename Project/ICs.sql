@@ -15,7 +15,7 @@ BEGIN
                FROM super_categoria
                WHERE nome = NEW.nome)
     THEN
-        RAISE EXCEPTION 'Simple category already exists as super category', NEW.nome;
+        RAISE EXCEPTION 'Simple category already exists as super category';
     END IF;
     RETURN NEW;
 END;
@@ -29,7 +29,7 @@ BEGIN
                FROM categoria_simples
                WHERE nome = NEW.nome)
     THEN
-        RAISE EXCEPTION 'Super category % already exists as simple category', NEW.nome;
+        RAISE EXCEPTION 'Super category already exists as simple category';
     END IF;
     RETURN NEW;
 END;
