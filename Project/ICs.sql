@@ -90,6 +90,11 @@ CREATE TRIGGER create_category_for_simple_or_super_trigger
 BEFORE UPDATE OR INSERT ON categoria_simples
 FOR EACH ROW EXECUTE PROCEDURE create_category_for_simple_or_super_proc();
 
+DROP TRIGGER IF EXISTS create_category_for_simple_or_super_trigger ON super_categoria;
+CREATE TRIGGER create_category_for_simple_or_super_trigger
+BEFORE UPDATE OR INSERT ON super_categoria
+FOR EACH ROW EXECUTE PROCEDURE create_category_for_simple_or_super_proc();
+
 DROP TRIGGER IF EXISTS chk_simple_category_is_not_super_category_trigger ON categoria_simples;
 CREATE TRIGGER chk_simple_category_is_not_super_category_trigger
 BEFORE UPDATE OR INSERT ON categoria_simples
