@@ -32,25 +32,24 @@ def list_replenishment_events():
         cursor.close()
         dbConn.close()
 
-#@app.route("/add_category", methods=["POST"])
-#def create_category():
-#    dbConn = None
-#    cursor = None
-#    try:
-#        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
-#        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-#        query = "INSERT INTO categoria VALUES (%s);"
-#        name = request.form["name"]
-#        data = (name,)
-#        cursor.execute(query, data)
-#        return query
-#    except Exception as e:
-#        return str(e)
-#    finally:
-#        dbConn.commit()
-#        cursor.close()
-#        dbConn.close()
-#
+@app.route("/add_category", methods=["POST"])
+def create_category():
+    dbConn = None
+    cursor = None
+    try:
+        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
+        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = "INSERT INTO categoria_simples VALUES (%(name)s);" % {'name': request.form['name']}
+        cursor.execute(query)
+        return query
+    except Exception as e:
+        return str(e)
+    finally:
+        dbConn.commit()
+        cursor.close()
+        dbConn.close()
+
+
 #@app.route("/delete_category", methods=["DELETE"])
 #def delete_category():
 #    dbConn = None
