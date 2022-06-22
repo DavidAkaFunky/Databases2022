@@ -39,7 +39,7 @@ CREATE OR REPLACE FUNCTION chk_category_supercat_of_itself_proc()
 RETURNS TRIGGER AS
 $$
 BEGIN
-    IF NEW.categoria == NEW.super_categoria THEN
+    IF NEW.categoria = NEW.super_categoria THEN
         RAISE EXCEPTION 'A category is super category of itself';
     END IF;
     RETURN NEW;

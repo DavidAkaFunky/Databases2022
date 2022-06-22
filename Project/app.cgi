@@ -78,9 +78,7 @@ def create_category():
 #        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
 #        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 #        query = "DELETE FROM categoria_simples WHERE name = %s;\
-#                 INSERT INTO super_categoria VALUES (%s);\
-#                 INSERT INTO categoria VALUES (%s);\
-#                 INSERT INTO categoria VALUES (%s);\
+#                 INSERT INTO super_categoria VALUES (%s);
 #                 INSERT INTO tem_outra VALUES (%s, %s);"
 #        name = request.form["name"]
 #        super_name = request.form["super_name"]
