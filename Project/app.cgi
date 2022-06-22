@@ -76,56 +76,56 @@ def delete_category():
         cursor.close()
         dbConn.close()
 
-@app.route("/new_subcategory/", methods=["POST"])
-def create_category():
-    dbConn = None
-    cursor = None
-    try:
-        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
-        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        name = request.form["nome"]
-        super_name = request.form["super_nome"]
-        query = "DELETE FROM categoria_simples\
-                 WHERE nome = '%s'\
-                 AND NOT EXISTS (SELECT *\
-                                 FROM super_categoria\
-                                 WHERE nome = '%s');"
-        data = (super_name, super_name)
-        cursor.execute(query, data)
-        query = "INSERT INTO super_categoria VALUES ('%s')\
-                 WHERE NOT EXISTS (SELECT *\
-                                   FROM super_categoria\
-                                   WHERE nome = '%s');"
-        cursor.execute(query, data)
-        query = "INSERT INTO tem_outra VALUES ('%s', '%s');"
-        data = (super_name, name)
-        cursor.execute(query, data)
-        return redirect(url_for("index"))
-    except Exception as e:
-        return str(e)
-    finally:
-        dbConn.commit()
-        cursor.close()
-        dbConn.close()
-
-#@app.route("/delete_subcategory/", methods=["DELETE"])
-#def delete_subcategory():
+#@app.route("/new_subcategory/", methods=["POST"])
+#def create_category():
 #    dbConn = None
 #    cursor = None
 #    try:
 #        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
 #        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-#        query = "DELETE FROM categoria WHERE nome = %s;"
 #        name = request.form["nome"]
-#        data = (name,)
+#        super_name = request.form["super_nome"]
+#        query = "DELETE FROM categoria_simples\
+#                 WHERE nome = '%s'\
+#                 AND NOT EXISTS (SELECT *\
+#                                 FROM super_categoria\
+#                                 WHERE nome = '%s');"
+#        data = (super_name, super_name)
 #        cursor.execute(query, data)
-#        return query
+#        query = "INSERT INTO super_categoria VALUES ('%s')\
+#                 WHERE NOT EXISTS (SELECT *\
+#                                   FROM super_categoria\
+#                                   WHERE nome = '%s');"
+#        cursor.execute(query, data)
+#        query = "INSERT INTO tem_outra VALUES ('%s', '%s');"
+#        data = (super_name, name)
+#        cursor.execute(query, data)
+#        return redirect(url_for("index"))
 #    except Exception as e:
 #        return str(e)
 #    finally:
 #        dbConn.commit()
 #        cursor.close()
 #        dbConn.close()
+
+@app.route("/delete_subcategory/", methods=["DELETE"])
+def delete_subcategory():
+    dbConn = None
+    cursor = None
+    try:
+        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
+        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = "DELETE FROM categoria WHERE nome = %s;"
+        name = request.form["nome"]
+        data = (name,)
+        cursor.execute(query, data)
+        return query
+    except Exception as e:
+        return str(e)
+    finally:
+        dbConn.commit()
+        cursor.close()
+        dbConn.close()
 
 @app.route("/list_replenishment_events/")
 def list_replenishment_events():
