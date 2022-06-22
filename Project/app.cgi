@@ -39,23 +39,23 @@ def index():
 def create_category_page():
     return render_template("new_category.html")
 
-#@app.route("/new_category/create", methods=["POST"])
-#def create_category():
-#    dbConn = None
-#    cursor = None
-#    try:
-#        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
-#        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-#        query = "INSERT INTO categoria_simples VALUES ('%(name)s');" % {'name': request.form['name']}
-#        cursor.execute(query)
-#        app.logger.info(query)
-#        return redirect(url_for("list_replenishment_events"))
-#    except Exception as e:
-#        return str(e)
-#    finally:
-#        dbConn.commit()
-#        cursor.close()
-#        dbConn.close()
+@app.route("/new_category/create", methods=["POST"])
+def create_category():
+    dbConn = None
+    cursor = None
+    try:
+        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
+        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = "INSERT INTO categoria_simples VALUES ('%(name)s');" % {'name': request.form['name']}
+        cursor.execute(query)
+        app.logger.info(query)
+        return redirect(url_for("list_replenishment_events"))
+    except Exception as e:
+        return str(e)
+    finally:
+        dbConn.commit()
+        cursor.close()
+        dbConn.close()
 
 #@app.route("/delete_category/", methods=["DELETE"])
 #def delete_category():
