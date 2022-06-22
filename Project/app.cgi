@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 from wsgiref.handlers import CGIHandler
-from flask import Flask
-from flask import render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import psycopg2
 import psycopg2.extras
 
@@ -15,6 +14,10 @@ DB_CONNECTION_STRING = "host=%s dbname=%s user=%s password=%s" % (DB_HOST, DB_DA
 app = Flask(__name__)
 
 @app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/replenishment_events/")
 def list_replenishment_events():
     dbConn = None
     cursor = None
@@ -22,10 +25,10 @@ def list_replenishment_events():
         dbConn = psycopg2.connect(DB_CONNECTION_STRING)
         cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         # Devemos pedir ao utilizador o número de série da IVM?
-        query = "SELECT num_serie, fabricante, nome, unidades\
+        query = "SELECT nome, unidades\
                  FROM evento_reposicao NATURAL JOIN prateleira;"
         cursor.execute(query)
-        return render_template("index.html", cursor=cursor)
+        return render_template("replenishment_events.html", cursor=cursor)
     except Exception as e:
         return str(e)  # Renders a page with the error.
     finally:
@@ -33,15 +36,20 @@ def list_replenishment_events():
         dbConn.close()
 
 @app.route("/new_category/")
+def create_category_page():
+    return render_template("new_category.html")
+
+@app.route("/new_category/create", methods=["POST"])
 def create_category():
     dbConn = None
     cursor = None
     try:
         dbConn = psycopg2.connect(DB_CONNECTION_STRING)
         cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        query = "INSERT INTO categoria_simples VALUES (%(name)s);" % {'name': request.form['name']}
+        query = "INSERT INTO categoria_simples VALUES ('%(name)s');" % {'name': request.form['name']}
         cursor.execute(query)
-        return query
+        app.logger.info(query)
+        return redirect(url_for("list_replenishment_events"))
     except Exception as e:
         return str(e)
     finally:

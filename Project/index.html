@@ -1,31 +1,17 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <title>Eventos de reposição</title>
-</head>
-<body style="padding:20px">
-{% if cursor %}
-    <table border="2px">
-        <thead>
-            <tr>
-                <th>Categoria</th>
-                <th>Unidades repostas</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for record in cursor %}
-                <tr>
-                    <td>{{ record[0] }}</td>
-                    <td>{{ record[1] }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p> Erro: não foi possível obter dados da base de dados!</p>
-{% endif %}
-<a href="new_category/">Criar categoria</a>
-<a href="new_subcategory/">Criar subcategoria</a>
+    <head>
+        <meta charset="utf-8">
+        <title>BD 2021/22 - Grupo 42</title>
+    </head>
+<body>
+    <h1>BD 2021/22 - Grupo 42</h1>
+    <h3 href="/replenishment_events">Eventos de reposição por IVM</h3>
+    <h3 href="/new_category">Criar categoria</h3>
+    <h3 href="/new_subcategory">Criar subcategoria</h3>
+    <h3 href="/new_retailer">Criar retalhista</h3>
+    <h3 href="/delete_category">Remover categoria</h3>
+    <h3 href="/delete_subcategory">Remover subcategoria</h3>
+    <h3 href="/delete_retailer">Remover retalhista</h3>
 </body>
 </html>
