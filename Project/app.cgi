@@ -57,24 +57,24 @@ def create_category():
         cursor.close()
         dbConn.close()
 
-#@app.route("/delete_category/", methods=["DELETE"])
-#def delete_category():
-#    dbConn = None
-#    cursor = None
-#    try:
-#        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
-#        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-#        query = "DELETE FROM categoria WHERE nome = %s;"
-#        name = request.form["nome"]
-#        data = (name,)
-#        cursor.execute(query, data)
-#        return query
-#    except Exception as e:
-#        return str(e)
-#    finally:
-#        dbConn.commit()
-#        cursor.close()
-#        dbConn.close()
+@app.route("/delete_category/", methods=["DELETE"])
+def delete_category():
+    dbConn = None
+    cursor = None
+    try:
+        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
+        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        query = "DELETE FROM categoria WHERE nome = %s;"
+        name = request.form["nome"]
+        data = (name,)
+        cursor.execute(query, data)
+        return query
+    except Exception as e:
+        return str(e)
+    finally:
+        dbConn.commit()
+        cursor.close()
+        dbConn.close()
 
 #@app.route("/new_subcategory/", methods=["POST"])
 #def create_category():
