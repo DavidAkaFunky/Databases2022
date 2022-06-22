@@ -17,27 +17,27 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-@app.route("/replenishment_events/")
-def list_replenishment_events():
-    dbConn = None
-    cursor = None
-    try:
-        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
-        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        # Devemos pedir ao utilizador o número de série da IVM?
-        query = "SELECT nome, unidades\
-                 FROM evento_reposicao NATURAL JOIN prateleira;"
-        cursor.execute(query)
-        return render_template("replenishment_events.html", cursor=cursor)
-    except Exception as e:
-        return str(e)  # Renders a page with the error.
-    finally:
-        cursor.close()
-        dbConn.close()
+#@app.route("/replenishment_events/")
+#def list_replenishment_events():
+#    dbConn = None
+#    cursor = None
+#    try:
+#        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
+#        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+#        # Devemos pedir ao utilizador o número de série da IVM?
+#        query = "SELECT nome, unidades\
+#                 FROM evento_reposicao NATURAL JOIN prateleira;"
+#        cursor.execute(query)
+#        return render_template("replenishment_events.html", cursor=cursor)
+#    except Exception as e:
+#        return str(e)  # Renders a page with the error.
+#    finally:
+#        cursor.close()
+#        dbConn.close()
 
-#@app.route("/new_category/")
-#def create_category_page():
-#    return render_template("new_category.html")
+@app.route("/new_category/")
+def create_category_page():
+    return render_template("new_category.html")
 
 #@app.route("/new_category/create", methods=["POST"])
 #def create_category():
