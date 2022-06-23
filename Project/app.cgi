@@ -107,17 +107,17 @@ def create_category():
 #        cursor.close()
 #        dbConn.close()
 
-@app.route("/new_retailer/", methods=["POST"])
+@app.route("/new_retailer", methods=["POST"])
 def create_retailer():
     dbConn = None
     cursor = None
     try:
         dbConn = psycopg2.connect(DB_CONNECTION_STRING)
         cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        query = "INSERT INTO retailer VALUES (%d, '%s');"
+        query = "INSERT INTO retalhista VALUES (%s, %s);"
         tin = request.form["tin"]
         name = request.form["nome"]
-        data = (name,)
+        data = (tin, name)
         cursor.execute(query, data)
         app.logger.info(query)
         return redirect(url_for("index"))
