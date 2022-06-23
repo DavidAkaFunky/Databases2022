@@ -15,9 +15,9 @@ HAVING COUNT(*) >= ALL (SELECT COUNT(*)
 SELECT DISTINCT nome
 FROM categoria_simples
 NATURAL JOIN SELECT (ean, nome as nome_cat
-                     FROM tem_categoria)
+             FROM tem_categoria)
 NATURAL JOIN SELECT (nome_cat, tin
-                     FROM responsavel_por)
+             FROM responsavel_por)
 NATURAL JOIN retalhista;
 
 /*Quais os produtos (ean) que nunca foram repostos?*/
@@ -26,7 +26,7 @@ SELECT ean
 FROM produto
 WHERE ean
 NOT IN (SELECT ean
-	    FROM evento_reposicao);
+	  FROM evento_reposicao);
 
 /*Quais os produtos (ean) que foram repostos sempre pelo mesmo retalhista?*/
 

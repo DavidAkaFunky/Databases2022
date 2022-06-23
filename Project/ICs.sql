@@ -68,7 +68,6 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION chk_rep_product_in_shelf_with_product_category_proc()
 RETURNS TRIGGER AS
 $$
-DECLARE count_category INT;
 BEGIN
     IF EXISTS (SELECT nome
     FROM tem_categoria
@@ -84,16 +83,6 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
-DROP TRIGGER IF EXISTS create_category_for_simple_or_super_trigger ON categoria_simples;
-CREATE TRIGGER create_category_for_simple_or_super_trigger
-BEFORE UPDATE OR INSERT ON categoria_simples
-FOR EACH ROW EXECUTE PROCEDURE create_category_for_simple_or_super_proc();
-
-DROP TRIGGER IF EXISTS create_category_for_simple_or_super_trigger ON super_categoria;
-CREATE TRIGGER create_category_for_simple_or_super_trigger
-BEFORE UPDATE OR INSERT ON super_categoria
-FOR EACH ROW EXECUTE PROCEDURE create_category_for_simple_or_super_proc();
 
 DROP TRIGGER IF EXISTS chk_simple_category_is_not_super_category_trigger ON categoria_simples;
 CREATE TRIGGER chk_simple_category_is_not_super_category_trigger

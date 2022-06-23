@@ -11,8 +11,7 @@ CREATE VIEW vendas(ean, cat, ano, trimestre, mes, dia_mes, dia_semana, distrito,
            distrito,
            concelho,
            unidades
-    FROM (SELECT ean, nro, num_serie, fabricante, instante, unidades
-          FROM evento_reposicao) AS evento_reposicao
+    FROM evento_reposicao
     NATURAL JOIN tem_categoria
     NATURAL JOIN instalada_em
     NATURAL JOIN (SELECT nome AS local, distrito, concelho

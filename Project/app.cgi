@@ -46,9 +46,12 @@ def create_category():
     try:
         dbConn = psycopg2.connect(DB_CONNECTION_STRING)
         cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        query = "INSERT INTO categoria_simples VALUES ('%(name)s');" % {'name': request.form['name']}
-        cursor.execute(query)
-        app.logger.info(query)
+        name = request.form['name']
+        data = (name,)
+        query = "INSERT INTO categoria VALUES ('%(name)s');"
+        cursor.execute(query, data)
+        query = "INSERT INTO categoria_simples VALUES ('%(name)s');"
+        cursor.execute(query, data)
         return redirect(url_for("list_replenishment_events"))
     except Exception as e:
         return str(e)
