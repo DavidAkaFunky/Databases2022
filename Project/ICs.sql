@@ -69,7 +69,7 @@ CREATE OR REPLACE FUNCTION chk_rep_product_in_shelf_with_product_category_proc()
 RETURNS TRIGGER AS
 $$
 BEGIN
-    IF EXISTS (SELECT nome
+    IF NOT EXISTS (SELECT nome
     FROM tem_categoria
     WHERE ean = NEW.ean
       AND nome IN (SELECT nome
