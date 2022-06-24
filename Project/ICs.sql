@@ -1,12 +1,3 @@
-CREATE OR REPLACE FUNCTION create_category_for_simple_or_super_proc()
-RETURNS TRIGGER AS
-$$
-BEGIN
-    INSERT INTO categoria VALUES (NEW.nome);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION chk_simple_category_is_not_super_category_proc()
     RETURNS TRIGGER AS
 $$
@@ -85,16 +76,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-
-DROP TRIGGER IF EXISTS create_category_for_simple_or_super_trigger ON categoria_simples;
-CREATE TRIGGER create_category_for_simple_or_super_trigger
-BEFORE UPDATE OR INSERT ON categoria_simples
-FOR EACH ROW EXECUTE PROCEDURE create_category_for_simple_or_super_proc();
-
-DROP TRIGGER IF EXISTS create_category_for_simple_or_super_trigger ON super_categoria;
-CREATE TRIGGER create_category_for_simple_or_super_trigger
-BEFORE UPDATE OR INSERT ON super_categoria
-FOR EACH ROW EXECUTE PROCEDURE create_category_for_simple_or_super_proc();
 
 DROP TRIGGER IF EXISTS chk_simple_category_is_not_super_category_trigger ON categoria_simples;
 CREATE TRIGGER chk_simple_category_is_not_super_category_trigger

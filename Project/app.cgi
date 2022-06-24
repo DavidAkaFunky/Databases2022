@@ -8,7 +8,7 @@ import psycopg2.extras
 DB_HOST="db.tecnico.ulisboa.pt"
 DB_USER="ist195579"
 DB_DATABASE=DB_USER
-DB_PASSWORD="yzdt9830"
+DB_PASSWORD="mryw7376"
 DB_CONNECTION_STRING = "host=%s dbname=%s user=%s password=%s" % (DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD)
 
 app = Flask(__name__)
@@ -24,9 +24,11 @@ def create_category():
     try:
         dbConn = psycopg2.connect(DB_CONNECTION_STRING)
         cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        query = "INSERT INTO categoria_simples VALUES (%s);"
         name = request.form["nome"]
         data = (name,)
+        query = "INSERT INTO categoria VALUES (%s);"
+        cursor.execute(query, data)
+        query = "INSERT INTO categoria_simples VALUES (%s);"
         cursor.execute(query, data)
         app.logger.info(query)
         return redirect(url_for("index"))
@@ -62,17 +64,21 @@ def delete_category():
         cursor.execute(query, data)
         query = "DELETE FROM super_categoria WHERE nome = %s;"
         cursor.execute(query, data)
-        query = "DELETE FROM tem_outra WHERE nome = %s;"
+
+        query = "DELETE FROM tem_outra WHERE categoria = %s OR super_categoria = %s;"
+        data = (name, name)
         cursor.execute(query, data)
+
         query = "DELETE FROM tem_categoria WHERE nome = %s;"
+        data = (name,)
         cursor.execute(query, data)
         query = "DELETE FROM prateleira WHERE nome = %s;"
         cursor.execute(query, data)
-        query = "DELETE FROM responsavel_por WHERE nome = %s;"
+        query = "DELETE FROM responsavel_por WHERE nome_cat = %s;"
         cursor.execute(query, data)
         query = "DELETE FROM categoria WHERE nome = %s;"
         cursor.execute(query, data)
-        return query
+        return redirect(url_for("index"))
     except Exception as e:
         return str(e)
     finally:
@@ -96,10 +102,7 @@ def create_subcategory():
         cursor.execute(query, data)
 
         query = "INSERT INTO super_categoria VALUES (%s)\
-                 WHERE NOT EXISTS (SELECT *\
-                                   FROM super_categoria\
-                                   WHERE nome = %s);"
-        data = (super_name, super_name)
+                 ON CONFLICT(nome) DO NOTHING;" 
         cursor.execute(query, data)
         query = "INSERT INTO tem_outra VALUES (%s, %s);"
         data = (super_name, name)
@@ -112,36 +115,37 @@ def create_subcategory():
         cursor.close()
         dbConn.close()
 
-# @app.route("/delete_subcategory", methods=["POST"])
-# def delete_subcategory():
-#     dbConn = None
-#     cursor = None
-#     try:
-#         dbConn = psycopg2.connect(DB_CONNECTION_STRING)
-#         cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-#         super_categoria = request.form["super_nome"]
-
-#         query = "DELETE *\
-#                  FROM super_categoria
-#                  WHERE NOT EXISTS (SELECT supercategoria\
-#                                    FROM tem_outra\
-#                                    WHERE super_categoria=%s);" 
-#         data = (super_name,)
-#         cursor.execute(query, data)
-
-#         query = "INSERT INTO categoria_simples VALUES(%s)\
-#                 WHERE NOT EXISTS (SELECT super_categoria\
-#                                   FROM tem_outra WHERE super_categoria=%s);" 
-#         data = (super_name, super_name)
-#         cursor.execute(query, data)
-
-#         return redirect(url_for("index"))
-#     except Exception as e:
-#         return str(e)
-#     finally:
-#         dbConn.commit()
-#         cursor.close()
-#         dbConn.close()
+@app.route("/delete_subcategory", methods=["POST"])
+def delete_subcategory():
+    dbConn = None
+    cursor = None
+    try:
+        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
+        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        name = request.form["nome"]
+        super_name = request.form["super_nome"]
+        query = "DELETE \
+                 FROM tem_outra\
+                 WHERE categoria=%s AND super_categoria=%s;"
+        data = (name, super_name)
+        cursor.execute(query, data)
+        query = "DELETE \
+                 FROM super_categoria\
+                 WHERE NOT EXISTS (SELECT super_categoria\
+                                   FROM tem_outra\
+                                   WHERE super_categoria=%s);" 
+        data = (super_name,)
+        cursor.execute(query, data)
+        query = "INSERT INTO categoria_simples VALUES(%s)\
+                 ON CONFLICT(nome) DO NOTHING;"
+        cursor.execute(query, data)
+        return redirect(url_for("index"))
+    except Exception as e:
+        return str(e)
+    finally:
+        dbConn.commit()
+        cursor.close()
+        dbConn.close()
 
 @app.route("/new_retailer", methods=["POST"])
 def create_retailer():
