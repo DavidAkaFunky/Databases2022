@@ -6,9 +6,9 @@ import psycopg2.extras
 
 ## SGBD configs
 DB_HOST="db.tecnico.ulisboa.pt"
-DB_USER="ist195579"
+DB_USER=""
 DB_DATABASE=DB_USER
-DB_PASSWORD="mryw7376"
+DB_PASSWORD=""
 DB_CONNECTION_STRING = "host=%s dbname=%s user=%s password=%s" % (DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD)
 
 app = Flask(__name__)
@@ -205,7 +205,7 @@ def list_replenishment_events():
         manufacturer = request.args.get("fabricante")
         data = (serial_number, manufacturer)
         cursor.execute(query, data)
-        return render_template("replenishment_events.html", cursor=cursor, serial_number = serial_number, manufacturer = manufacturer )
+        return render_template("replenishment_events.html", cursor=cursor, serial_number = serial_number, manufacturer = manufacturer)
     except Exception as e:
         return str(e)  # Renders a page with the error.
     finally:
