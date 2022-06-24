@@ -1,8 +1,8 @@
-CREATE OR REPLACE FUNCTION create_simple_category_proc()
+CREATE OR REPLACE FUNCTION create_category_for_simple_or_super_proc()
 RETURNS TRIGGER AS
 $$
 BEGIN
-    INSERT INTO categoria_simples VALUES (NEW.nome);
+    INSERT INTO categoria VALUES (NEW.nome);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -35,12 +35,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+---- This IC is implicit in the first ICs ----
 CREATE OR REPLACE FUNCTION chk_category_supercat_of_itself_proc()
 RETURNS TRIGGER AS
 $$
 BEGIN
     IF NEW.categoria = NEW.super_categoria THEN
-        RAISE EXCEPTION 'A category is super category of itself';
+        RAISE EXCEPTION 'A category cannot be super category of itself';
     END IF;
     RETURN NEW;
 END;
@@ -85,10 +86,15 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-DROP TRIGGER IF EXISTS create_simple_category_trigger ON categoria;
-CREATE TRIGGER create_simple_category_trigger
-AFTER UPDATE OR INSERT ON categoria
-FOR EACH ROW EXECUTE PROCEDURE create_simple_category_proc();
+DROP TRIGGER IF EXISTS create_category_for_simple_or_super_trigger ON categoria_simples;
+CREATE TRIGGER create_category_for_simple_or_super_trigger
+BEFORE UPDATE OR INSERT ON categoria_simples
+FOR EACH ROW EXECUTE PROCEDURE create_category_for_simple_or_super_proc();
+
+DROP TRIGGER IF EXISTS create_category_for_simple_or_super_trigger ON super_categoria;
+CREATE TRIGGER create_category_for_simple_or_super_trigger
+BEFORE UPDATE OR INSERT ON super_categoria
+FOR EACH ROW EXECUTE PROCEDURE create_category_for_simple_or_super_proc();
 
 DROP TRIGGER IF EXISTS chk_simple_category_is_not_super_category_trigger ON categoria_simples;
 CREATE TRIGGER chk_simple_category_is_not_super_category_trigger
