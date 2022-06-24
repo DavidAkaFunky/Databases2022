@@ -191,7 +191,7 @@ def delete_retailer():
         cursor.close()
         dbConn.close()
 
-@app.route("/list_replenishment_events", methods=["GET"])
+@app.route("/list_replenishment_events")
 def list_replenishment_events():
     dbConn = None
     cursor = None
