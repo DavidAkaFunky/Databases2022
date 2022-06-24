@@ -10,7 +10,7 @@
         <p><input type="submit" value="Submit"/></p>
     </form>
     <h3>Remover categoria</h3>
-    <form action="delete_category" method="delete">
+    <form action="delete_category" method="post">
         <p>Nome da categoria: <input type="text" name="nome"/></p>
         <p><input type="submit" value="Submit"/></p>
     </form>
@@ -38,13 +38,13 @@
         <p><input type="submit" value="Submit"/></p>
     </form>
     <h3>Listar eventos de reposição de IVM</h3>
-    <form action="list_replenishment_events" method="post">
+    <form action="list_replenishment_events" method="get">
         <p>Número de série da IVM: <input type="number" name="num_serie"/></p>
         <p>Fabricante da IVM: <input type="text" name="fabricante"/></p>
         <p><input type="submit" value="Submit"/></p>
     </form>
     <h3>Listar subcategorias de categoria</h3>
-    <form action="list_subcategories" method="post">
+    <form action="list_subcategories" method="get">
         <p>Nome da categoria: <input type="text" name="nome"/></p>
         <p><input type="submit" value="Submit"/></p>
     </form>
