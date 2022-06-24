@@ -24,7 +24,7 @@ def create_category():
     try:
         dbConn = psycopg2.connect(DB_CONNECTION_STRING)
         cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        query = "INSERT INTO categoria_simples VALUES (%s);"
+        query = "INSERT INTO categoria VALUES (%s);"
         name = request.form["nome"]
         data = (name,)
         cursor.execute(query, data)

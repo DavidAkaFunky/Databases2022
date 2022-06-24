@@ -1,7 +1,7 @@
-INSERT INTO categoria_simples VALUES ('sandes de fiambre');
-INSERT INTO categoria_simples VALUES ('sandes de queijo');
-INSERT INTO categoria_simples VALUES ('bebidas em garrafa');
-INSERT INTO categoria_simples VALUES ('bebidas em lata');
+INSERT INTO categoria VALUES ('sandes de fiambre');
+INSERT INTO categoria VALUES ('sandes de queijo');
+INSERT INTO categoria VALUES ('bebidas em garrafa');
+INSERT INTO categoria VALUES ('bebidas em lata');
 
 INSERT INTO super_categoria VALUES ('sandes');
 INSERT INTO super_categoria VALUES ('bebidas');
