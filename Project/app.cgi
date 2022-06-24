@@ -199,20 +199,20 @@ def list_replenishment_events():
         dbConn = psycopg2.connect(DB_CONNECTION_STRING)
         cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         query = "SELECT nome, unidades\
-                 FROM evento_reposicao NATURAL JOIN prateleira;\
+                 FROM evento_reposicao NATURAL JOIN prateleira\
                  WHERE num_serie = %s AND fabricante = %s;"
-        serial_number = request.form["num_serie"]
-        manufacturer = request.form["fabricante"]
+        serial_number = request.args.get("num_serie")
+        manufacturer = request.args.get("fabricante")
         data = (serial_number, manufacturer)
         cursor.execute(query, data)
-        return render_template("replenishment_events.html", cursor=cursor)
+        return render_template("replenishment_events.html", cursor=cursor, serial_number = serial_number, manufacturer = manufacturer )
     except Exception as e:
         return str(e)  # Renders a page with the error.
     finally:
         cursor.close()
         dbConn.close()
 
-@app.route("/list_subcategories", methods=["GET"])
+@app.route("/list_subcategories")
 def list_subcategories():
     dbConn = None
     cursor = None
@@ -220,16 +220,16 @@ def list_subcategories():
         dbConn = psycopg2.connect(DB_CONNECTION_STRING)
         cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         query = "WITH RECURSIVE sub_categorias AS (\
-                     SELECT *\
+                     SELECT categoria\
                      FROM tem_outra\
                      WHERE super_categoria = %s\
                  UNION ALL\
-                     SELECT *\
+                     SELECT tem_outra.categoria\
                      FROM tem_outra\
                          JOIN sub_categorias ON tem_outra.super_categoria = sub_categorias.categoria\
                  )\
                  SELECT categoria FROM sub_categorias;"
-        name = request.form["nome"]
+        name = request.args.get("nome")
         data = (name,)
         cursor.execute(query, data)
         return render_template("subcategories.html", cursor=cursor, name=name)
